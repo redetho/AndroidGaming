@@ -135,13 +135,13 @@ public class LigmaGame extends ApplicationAdapter {
 	}
 	private void verificarEstadoJogo(){
 		boolean toqueTela = Gdx.input.justTouched();
-		if (estadoJogo == 0){
-			if(toqueTela){
+		if (estadoJogo == 0) {
+			if (toqueTela) {
 				gravidade = -15;
 				estadoJogo = 1;
 				somVoando.play();
 			}
-			else if( estadoJogo == 1){
+		}else if( estadoJogo == 1){
 				if(toqueTela){
 					gravidade = -15;
 					somVoando.play();
@@ -156,26 +156,27 @@ public class LigmaGame extends ApplicationAdapter {
 					posicaoInicialVerticalPassaro = posicaoInicialVerticalPassaro - gravidade;
 					gravidade++;
 				}
-				else if (estadoJogo ==2){
-					if(pontos > pontuacaoMaxima){
+				else if (estadoJogo == 2){
+					if(pontos >= pontuacaoMaxima) {
 						pontuacaoMaxima = pontos;
 						preferencias.putInteger("pontuacaoMaxima", pontuacaoMaxima);
 						preferencias.flush();
-					}
-					posicaoHorizontalPassaro -= Gdx.graphics.getDeltaTime()*500;
 
-					if(toqueTela){
-						estadoJogo = 0;
-						pontos =0;
-						gravidade=0;
-						posicaoHorizontalPassaro = 0;
-						posicaoInicialVerticalPassaro = alturaDispositivo/2;
-						posicaoCanoHorizontal = larguraDispositivo;
+						posicaoHorizontalPassaro -= Gdx.graphics.getDeltaTime() * 500;
+
+						if (toqueTela) {
+							estadoJogo = 0;
+							pontos = 0;
+							gravidade = 0;
+							posicaoHorizontalPassaro = 0;
+							posicaoInicialVerticalPassaro = alturaDispositivo / 2;
+							posicaoCanoHorizontal = larguraDispositivo;
+						}
 					}
 				}
 			}
 		}
-	}
+
 
 	private void detectarColisoes(){
 		circulopassaro.set(
@@ -197,12 +198,13 @@ public class LigmaGame extends ApplicationAdapter {
 
 		boolean colidiuCanoCima = Intersector.overlaps(circulopassaro, retanguloCanoCima);
 		boolean colidiuCanoBaixo = Intersector.overlaps(circulopassaro, retanguloCanoBaixo);
+
 	if(colidiuCanoCima || colidiuCanoBaixo){
-		if(estadoJogo ==1){
+		if(estadoJogo == 1){
 			somColisao.play();
-			estadoJogo =2;
+			estadoJogo = 2;
 		}
-	}
+		}
 	}
 
 	private void desenharTexturas(){
@@ -213,18 +215,15 @@ public class LigmaGame extends ApplicationAdapter {
 		50 + posicaoHorizontalPassaro,posicaoInicialVerticalPassaro);
 		batch.draw(canoBaixo,posicaoCanoHorizontal,
 				alturaDispositivo/2 - canoBaixo.getHeight() - espacoEntreCanos/2 + posicaocanoVertical);
+		batch.draw(canoTopo, posicaoCanoHorizontal,
+				alturaDispositivo/2 + espacoEntreCanos /2 + posicaocanoVertical);
 		textoPontuacao.draw(batch, String.valueOf(pontos), larguraDispositivo/2,
 				alturaDispositivo -110);
 
-		if(estadoJogo ==2){
-			batch.draw(gameOver, larguraDispositivo/2 - gameOver.getWidth()/2,
-					alturaDispositivo/2);
-			textoReiniciar.draw(batch,
-					"toque para reiniciar!", larguraDispositivo/2 -140,
-					alturaDispositivo/2 - gameOver.getHeight()/2);
-			textoMelhorPontuacao.draw(batch,
-					"Seu record é: " + pontuacaoMaxima + " pontos.",
-					larguraDispositivo/2 -140, alturaDispositivo/2 - gameOver.getHeight());
+		if(estadoJogo == 2){
+			batch.draw(gameOver, larguraDispositivo / 2 - gameOver.getWidth()/2,  alturaDispositivo/2);
+			textoReiniciar.draw(batch, "toque para reiniciar!", larguraDispositivo/2 -140, alturaDispositivo/2 - gameOver.getHeight()/2);
+			textoMelhorPontuacao.draw(batch, "Seu record é: " + pontuacaoMaxima + " pontos.", larguraDispositivo/2 -140, alturaDispositivo/2 - gameOver.getHeight());
 		}
 		batch.end();
 	}
