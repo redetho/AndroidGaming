@@ -26,15 +26,23 @@ public class LigmaGame extends ApplicationAdapter {
 
 	Texture[] birdArray;
 
+
 	Texture backTex;
 	Texture pipeDownTex;
+	Texture startGameTex;
+	Texture coinGold;
+	Texture coinSilver;
+
 
 	Texture pipeUpTex;
 	Texture gameOverTex;
 
 	ShapeRenderer shapeRenderer;
 
+
 	Circle birdCol;
+	Circle coinGoldCollider;
+	Circle coinSilverCollider;
 	Rectangle rectanglePipeUpCol;
 	Rectangle rectanglePipeDownCol;
 
@@ -46,6 +54,13 @@ public class LigmaGame extends ApplicationAdapter {
 	float posPipeHorizontal;
 	float posPipeVertical;
 	float spaceBetweenPipes;
+
+	float posCoinHorizontal;
+	float posCoinVertical;
+
+	float posCoinHorizontalSilver;
+	float posCoinVerticalSilver;
+
 	Random random;
 	int points = 0;
 	int maxScore = 0;
@@ -87,11 +102,14 @@ public class LigmaGame extends ApplicationAdapter {
 		birdArray[0] = new Texture("passaro1.png");
 		birdArray[1] = new Texture("passaro2.png");
 		birdArray[2] = new Texture("passaro3.png");
+		startGameTex = new Texture("bird.png");
 
 		backTex = new Texture("fundo.png");
 		pipeDownTex = new Texture("cano_baixo_maior.png");
 		pipeUpTex = new Texture("cano_topo_maior.png");
 		gameOverTex = new Texture("game_over.png");
+		coinGold = new Texture("goldCoin.png");
+		coinSilver = new Texture("silverCoin.png");
 	}
 
 	private void startObjects(){
@@ -122,6 +140,15 @@ public class LigmaGame extends ApplicationAdapter {
 		rectanglePipeDownCol = new Rectangle();
 		rectanglePipeUpCol = new Rectangle();
 
+		posCoinVertical = devHeight/2;
+		posCoinHorizontal = devWidth;
+
+		posCoinVerticalSilver = devHeight/2;
+		posCoinHorizontalSilver = devWidth;
+
+		coinSilverCollider = new Circle();
+		coinGoldCollider = new Circle();
+
 		flyingSound = Gdx.audio.newSound(Gdx.files.internal("som_asa.wav"));
 		collisionSound = Gdx.audio.newSound(Gdx.files.internal("som_batida.wav"));
 		scoreSound = Gdx.audio.newSound(Gdx.files.internal("som_pontos.wav"));
@@ -149,10 +176,19 @@ public class LigmaGame extends ApplicationAdapter {
 			}
 			//faz os canos se moverem
 			posPipeHorizontal -= Gdx.graphics.getDeltaTime() * 200;
+			posCoinHorizontal -= Gdx.graphics.getDeltaTime() * 200;
+			posCoinHorizontalSilver -= Gdx.graphics.getDeltaTime() * 200;
 			if( posPipeHorizontal < -pipeUpTex.getWidth()){
 				posPipeHorizontal = devWidth;
 				posPipeVertical = random.nextInt(400) - 200;
 				pipePassed = false;
+			}
+			if( posCoinHorizontal < -coinGold.getWidth()){
+				posCoinHorizontal = devWidth + random.nextInt(Math.round((devWidth * .5f)));
+				posCoinVertical = random.nextInt(Math.round(devHeight)) - 200;}
+			if(posCoinHorizontalSilver <-coinSilver.getWidth()){
+				posCoinHorizontalSilver = devWidth + random.nextInt(Math.round((devWidth * .5f)));
+				posCoinVerticalSilver = random.nextInt(Math.round(devHeight));
 			}
 			if( birdStartingVerticalPosition > 0 || touchScreen)
 				birdStartingVerticalPosition = birdStartingVerticalPosition - gravity;
@@ -183,6 +219,17 @@ public class LigmaGame extends ApplicationAdapter {
 				birdStartingVerticalPosition + birdArray[0].getHeight()/2,
 				birdArray[0].getWidth()/2
 		);
+		coinGoldCollider.set(
+				50 + posCoinHorizontal + coinGold.getWidth()/2,
+				posCoinVertical + coinGold.getHeight()/2,
+				coinGold.getWidth()/2
+		);
+		coinSilverCollider.set(
+				50 + posCoinHorizontalSilver + coinSilver.getWidth()/2,
+				posCoinVerticalSilver + coinSilver.getHeight()/2,
+				coinSilver.getWidth()/2
+
+		);
 		rectanglePipeDownCol.set(
 				posPipeHorizontal,
 				devHeight/2 - pipeDownTex.getHeight() - spaceBetweenPipes / 2 + posPipeVertical,
@@ -202,6 +249,18 @@ public class LigmaGame extends ApplicationAdapter {
 				gameState = 2;
 			}
 		}
+		boolean collideCoinGold = Intersector.overlaps(birdCol, coinGoldCollider);
+		boolean collideCoin = Intersector.overlaps(birdCol, coinSilverCollider);
+		if(collideCoinGold){
+			posCoinHorizontal = -devHeight;
+			points = points + 10;
+			scoreSound.play();
+		}else  if (collideCoin){
+			posCoinHorizontalSilver = -devHeight;
+			points = points + 5;
+			scoreSound.play();
+		}
+
 	}
 	//cria as texturas no jogo, na tela inteira
 	private void drawTextures(){
@@ -216,6 +275,13 @@ public class LigmaGame extends ApplicationAdapter {
 				devHeight/2 + spaceBetweenPipes/2 + posPipeVertical);
 		scoreTex.draw(batch, String.valueOf(points), devWidth/2,
 				devHeight - 110);
+		batch.draw(coinGold, 50 + posCoinHorizontal, posCoinVertical);
+		batch.draw(coinSilver, 50 + posCoinHorizontalSilver, posCoinVerticalSilver);
+
+		if(gameState == 0) {
+			batch.draw(startGameTex, devWidth/2 - startGameTex.getWidth()/2,
+					devHeight/3);
+		}
 
 		if(gameState == 2){
 			batch.draw(gameOverTex, devWidth/2 - gameOverTex.getWidth()/2,
