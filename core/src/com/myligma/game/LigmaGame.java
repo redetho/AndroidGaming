@@ -192,6 +192,7 @@ public class LigmaGame extends ApplicationAdapter {
 				posPipeVertical = random.nextInt(400) - 200;
 				pipePassed = false;
 			}
+			// cria as moedas
 			if( posCoinHorizontal < -coinGold.getWidth()){
 				posCoinHorizontal = devWidth + random.nextInt(Math.round((devWidth * .5f)));
 				posCoinVertical = random.nextInt(Math.round(devHeight)) - 200;}
@@ -199,6 +200,7 @@ public class LigmaGame extends ApplicationAdapter {
 				posCoinHorizontalSilver = devWidth + random.nextInt(Math.round((devWidth * .5f)));
 				posCoinVerticalSilver = random.nextInt(Math.round(devHeight));
 			}
+			//faz o passaro pular se tocar na tela
 			if( birdStartingVerticalPosition > 0 || touchScreen)
 				birdStartingVerticalPosition = birdStartingVerticalPosition - gravity;
 			gravity++;
@@ -248,19 +250,23 @@ public class LigmaGame extends ApplicationAdapter {
 				posPipeHorizontal, devHeight / 2 + spaceBetweenPipes / 2 + posPipeVertical,
 				pipeUpTex.getWidth(), pipeUpTex.getHeight()
 		);
+		//coloca colisores fora da tela
 		TopCol.set(devWidth/2 -300, devHeight, devWidth, 300);
 		DownCol.set(devWidth/2 -300, devHeight - (devHeight + 350), devWidth, 350);
 
+		//checa as colisões de cano e fora da tela.
 		boolean collidedPipeTop = Intersector.overlaps(birdCol, rectanglePipeUpCol);
 		boolean collidedPipeDown = Intersector.overlaps(birdCol, rectanglePipeDownCol);
 		boolean collidedUp = Intersector.overlaps(birdCol, TopCol);
 		boolean collidedDown = Intersector.overlaps(birdCol, DownCol);
+		//morre se tocar num cano
 		if (collidedPipeTop || collidedPipeDown){
 			if (gameState == 1){
 				collisionSound.play();
 				gameState = 2;
 			}
 		}
+		//morre se cair fora da tela
 		if (collidedUp){
 			if (gameState == 1) {
 				collisionSound.play();
@@ -273,6 +279,7 @@ public class LigmaGame extends ApplicationAdapter {
 				gameState = 2;
 			}
 	}
+		//recebe moeda se colidir com ela
 		boolean collideCoinGold = Intersector.overlaps(birdCol, coinGoldCollider);
 		boolean collideCoin = Intersector.overlaps(birdCol, coinSilverCollider);
 		if(collideCoinGold){
@@ -301,12 +308,12 @@ public class LigmaGame extends ApplicationAdapter {
 				devHeight - 110);
 		batch.draw(coinGold, 50 + posCoinHorizontal, posCoinVertical);
 		batch.draw(coinSilver, 50 + posCoinHorizontalSilver, posCoinVerticalSilver);
-
+		//aparece tela de início
 		if(gameState == 0) {
 			batch.draw(startGameTex, devWidth/2 - startGameTex.getWidth()/2,
 					devHeight/3);
 		}
-
+		//tela de morte
 		if(gameState == 2){
 			batch.draw(gameOverTex, devWidth/2 - gameOverTex.getWidth()/2,
 					devHeight/2);
@@ -321,6 +328,7 @@ public class LigmaGame extends ApplicationAdapter {
 	}
 	//Confere se o passaro passou entre os canos
 	public void validatePoints(){
+		//calcula pontos e aumenta a dificuldade se recebe mais de 20 pontos
 		if( posPipeHorizontal < 50-birdArray[0].getWidth()){
 			if (!pipePassed){
 				points++;
