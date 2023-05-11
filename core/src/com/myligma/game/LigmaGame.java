@@ -249,7 +249,7 @@ public class LigmaGame extends ApplicationAdapter {
 				pipeUpTex.getWidth(), pipeUpTex.getHeight()
 		);
 		TopCol.set(devWidth/2 -300, devHeight, devWidth, 300);
-		DownCol.set(devWidth/2 -300, devHeight - (devHeight -1), devWidth, 300);
+		DownCol.set(devWidth/2 -300, devHeight - (devHeight + 350), devWidth, 350);
 
 		boolean collidedPipeTop = Intersector.overlaps(birdCol, rectanglePipeUpCol);
 		boolean collidedPipeDown = Intersector.overlaps(birdCol, rectanglePipeDownCol);
@@ -260,16 +260,19 @@ public class LigmaGame extends ApplicationAdapter {
 				collisionSound.play();
 				gameState = 2;
 			}
-		} else if (collidedUp){
+		}
+		if (collidedUp){
 			if (gameState == 1) {
 				collisionSound.play();
 				gameState = 2;
 			}
-			else if (collidedDown){
-				if (gameState == 1) {
-					collisionSound.play();
-					gameState = 2;
-				}}}
+		}
+		if (collidedDown){
+			if (gameState == 1) {
+				collisionSound.play();
+				gameState = 2;
+			}
+	}
 		boolean collideCoinGold = Intersector.overlaps(birdCol, coinGoldCollider);
 		boolean collideCoin = Intersector.overlaps(birdCol, coinSilverCollider);
 		if(collideCoinGold){
