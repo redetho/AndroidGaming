@@ -46,6 +46,10 @@ public class LigmaGame extends ApplicationAdapter {
 	Rectangle rectanglePipeUpCol;
 	Rectangle rectanglePipeDownCol;
 
+	Rectangle TopCol;
+
+	Rectangle DownCol;
+
 	float devWidth;
 	float devHeight;
 	float variation = 0;
@@ -71,6 +75,8 @@ public class LigmaGame extends ApplicationAdapter {
 	BitmapFont restartTex;
 	BitmapFont bestScoreTex;
 	Sound flyingSound;
+
+	Sound CoinSound;
 	Sound collisionSound;
 	Sound scoreSound;
 
@@ -139,6 +145,8 @@ public class LigmaGame extends ApplicationAdapter {
 		birdCol = new Circle();
 		rectanglePipeDownCol = new Rectangle();
 		rectanglePipeUpCol = new Rectangle();
+		TopCol = new Rectangle();
+		DownCol = new Rectangle();
 
 		posCoinVertical = devHeight/2;
 		posCoinHorizontal = devWidth;
@@ -150,6 +158,7 @@ public class LigmaGame extends ApplicationAdapter {
 		coinGoldCollider = new Circle();
 
 		flyingSound = Gdx.audio.newSound(Gdx.files.internal("som_asa.wav"));
+		CoinSound = Gdx.audio.newSound(Gdx.files.internal("CoinCollect.wav"));
 		collisionSound = Gdx.audio.newSound(Gdx.files.internal("som_batida.wav"));
 		scoreSound = Gdx.audio.newSound(Gdx.files.internal("som_pontos.wav"));
 
@@ -239,26 +248,38 @@ public class LigmaGame extends ApplicationAdapter {
 				posPipeHorizontal, devHeight / 2 + spaceBetweenPipes / 2 + posPipeVertical,
 				pipeUpTex.getWidth(), pipeUpTex.getHeight()
 		);
+		TopCol.set(devWidth/2 -300, devHeight, devWidth, 300);
+		DownCol.set(devWidth/2 -300, devHeight - (devHeight -1), devWidth, 300);
 
 		boolean collidedPipeTop = Intersector.overlaps(birdCol, rectanglePipeUpCol);
 		boolean collidedPipeDown = Intersector.overlaps(birdCol, rectanglePipeDownCol);
-
+		boolean collidedUp = Intersector.overlaps(birdCol, TopCol);
+		boolean collidedDown = Intersector.overlaps(birdCol, DownCol);
 		if (collidedPipeTop || collidedPipeDown){
 			if (gameState == 1){
 				collisionSound.play();
 				gameState = 2;
 			}
-		}
+		} else if (collidedUp){
+			if (gameState == 1) {
+				collisionSound.play();
+				gameState = 2;
+			}
+			else if (collidedDown){
+				if (gameState == 1) {
+					collisionSound.play();
+					gameState = 2;
+				}}}
 		boolean collideCoinGold = Intersector.overlaps(birdCol, coinGoldCollider);
 		boolean collideCoin = Intersector.overlaps(birdCol, coinSilverCollider);
 		if(collideCoinGold){
 			posCoinHorizontal = -devHeight;
 			points = points + 10;
-			scoreSound.play();
+			CoinSound.play();
 		}else  if (collideCoin){
 			posCoinHorizontalSilver = -devHeight;
 			points = points + 5;
-			scoreSound.play();
+			CoinSound.play();
 		}
 
 	}
@@ -302,6 +323,9 @@ public class LigmaGame extends ApplicationAdapter {
 				points++;
 				pipePassed = true;
 				scoreSound.play();
+				if(points >= 20){
+					spaceBetweenPipes = 200;
+				}
 			}
 		}
 
