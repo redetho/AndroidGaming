@@ -1,9 +1,12 @@
 package com.myligma.game;
 
+
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -18,6 +21,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import java.util.Random;
+
 
 public class LigmaGame extends ApplicationAdapter {
 
@@ -95,6 +99,8 @@ public class LigmaGame extends ApplicationAdapter {
 	}
 	@Override
 	public void render () {
+
+		super.render();
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 		verifyGameState();
@@ -335,7 +341,7 @@ public class LigmaGame extends ApplicationAdapter {
 				pipePassed = true;
 				scoreSound.play();
 				if(points >= 20){
-					spaceBetweenPipes = 200;
+					spaceBetweenPipes = 250;
 				}
 			}
 		}
